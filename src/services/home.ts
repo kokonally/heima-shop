@@ -14,3 +14,13 @@ export const getHomeBanner = (distributionSite = 1) => {
     },
   })
 }
+
+/**
+ * 首页-前台分类
+ */
+export const getHomeCategoryMutli = () => {
+  return http({
+    method: 'GET',
+    url: '/home/category/mutli',
+  })
+}
