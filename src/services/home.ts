@@ -1,5 +1,5 @@
 import { http } from '@/utils/http'
-import type { BannerItem } from '@/types/home'
+import type { BannerItem, CategoryItem } from '@/types/home'
 
 /**
  * 首页广告区域
@@ -19,7 +19,7 @@ export const getHomeBanner = (distributionSite = 1) => {
  * 首页-前台分类
  */
 export const getHomeCategoryMutli = () => {
-  return http({
+  return http<CategoryItem[]>({
     method: 'GET',
     url: '/home/category/mutli',
   })
