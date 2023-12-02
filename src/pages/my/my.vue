@@ -9,7 +9,6 @@ async function getData() {
     method: 'GET',
     url: '/home/banner',
   })
-  console.log(resp)
 }
 </script>
 
