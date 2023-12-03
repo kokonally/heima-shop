@@ -8,6 +8,7 @@ import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import CategoryPanel from '@/pages/index/components/CategoryPanel.vue'
 import HotPanel from '@/pages/index/components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/component'
+import PageSkeleton from '@/pages/index/components/PageSkeleton.vue'
 
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -28,12 +29,12 @@ const getHomeHotMutliData = async () => {
   const resp = await getHomeHotMutli()
   hotList.value = resp.result
 }
-
+const isLoading = ref<boolean>(false)
 // 页面加载完成后执行
-onLoad(() => {
-  getHomeBannerData()
-  getgetHomeCategoryMutliData()
-  getHomeHotMutliData()
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerData(), getgetHomeCategoryMutliData(), getHomeHotMutliData()])
+  isLoading.value = false
 })
 
 const guessRef = ref<XtxGuessInstance>() //获取猜你喜欢组件实例
@@ -43,6 +44,7 @@ function onScrolltolower() {
 }
 
 const refresherStatus = ref<boolean>(false)
+
 //自定义下拉刷新被触发
 async function onRefresherrefresh() {
   refresherStatus.value = true //开启下拉动画
@@ -69,14 +71,17 @@ async function onRefresherrefresh() {
     class="scroll-view"
     scroll-y
   >
-    <!--轮播图-->
-    <XtxSwiper :list="bannerList" />
-    <!--分类-->
-    <CategoryPanel :list="categoryList" />
-    <!--热门推荐-->
-    <HotPanel :list="hotList" />
-    <!--猜你喜欢-->
-    <XtxGuess ref="guessRef" />
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <!--轮播图-->
+      <XtxSwiper :list="bannerList" />
+      <!--分类-->
+      <CategoryPanel :list="categoryList" />
+      <!--热门推荐-->
+      <HotPanel :list="hotList" />
+      <!--猜你喜欢-->
+      <XtxGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
