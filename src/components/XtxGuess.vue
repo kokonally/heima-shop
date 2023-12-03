@@ -26,6 +26,17 @@ const getHomeGoodsGuessLikeData = async () => {
   }
 }
 
+//刷新页面
+const reFlash = () => {
+  //1.重置查询参数
+  pageParam.page = 1
+  //2.重置数据
+  guessList.value = []
+  finish.value = false
+  //3.加载数据
+  getHomeGoodsGuessLikeData()
+}
+
 onLoad(() => {
   getHomeGoodsGuessLikeData()
 })
@@ -33,6 +44,7 @@ onLoad(() => {
 //暴露方法
 defineExpose({
   getMore: getHomeGoodsGuessLikeData,
+  reFlash,
 })
 </script>
 
