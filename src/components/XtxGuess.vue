@@ -4,15 +4,35 @@ import { onLoad } from '@dcloudio/uni-app'
 import { getHomeGoodsGuessLike } from '@/services/home'
 import { ref } from 'vue'
 import type { GuessItem } from '@/types/home'
+import type { PageParams } from '@/types/global'
 
 const guessList = ref<GuessItem[]>([])
+const pageParam: PageParams = {
+  page: 1,
+  size: 10,
+}
+const finish = ref<boolean>(false)
 const getHomeGoodsGuessLikeData = async () => {
-  const resp = await getHomeGoodsGuessLike()
-  guessList.value = resp.result.items
+  if (finish.value) {
+    return
+  }
+  const resp = await getHomeGoodsGuessLike(pageParam)
+  guessList.value.push(...resp.result.items)
+  //分页条件
+  if (pageParam.page < resp.result.pages) {
+    pageParam.page++
+  } else {
+    finish.value = true
+  }
 }
 
 onLoad(() => {
   getHomeGoodsGuessLikeData()
+})
+
+//暴露方法
+defineExpose({
+  getMore: getHomeGoodsGuessLikeData,
 })
 </script>
 
@@ -36,7 +56,7 @@ onLoad(() => {
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载...</view>
+  <view class="loading-text"> {{ finish ? '没有更多了' : '加载中...' }}</view>
 </template>
 
 <style lang="scss">
