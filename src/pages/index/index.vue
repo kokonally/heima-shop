@@ -41,13 +41,33 @@ const guessRef = ref<XtxGuessInstance>() //获取猜你喜欢组件实例
 function onScrolltolower() {
   guessRef.value?.getMore()
 }
+
+const refresherStatus = ref<boolean>(false)
+//自定义下拉刷新被触发
+async function onRefresherrefresh() {
+  refresherStatus.value = true //开启下拉动画
+  await Promise.all([getHomeBannerData(), getgetHomeCategoryMutliData(), getHomeHotMutliData()])
+  //刷新成功
+  uni.showToast({
+    icon: 'none',
+    title: '刷新成功',
+  })
+  refresherStatus.value = false //关闭下拉动画
+}
 </script>
 
 <template>
   <!--导航栏-->
   <CustomNavbar />
   <!--滚动容器-->
-  <scroll-view @scrolltolower="onScrolltolower" class="scroll-view" scroll-y>
+  <scroll-view
+    refresher-enabled
+    :refresher-triggered="refresherStatus"
+    @refresherrefresh="onRefresherrefresh"
+    @scrolltolower="onScrolltolower"
+    class="scroll-view"
+    scroll-y
+  >
     <!--轮播图-->
     <XtxSwiper :list="bannerList" />
     <!--分类-->
