@@ -35,6 +35,25 @@ const activeIndex = ref(0)
 onLoad(() => {
   getHotRecommendData()
 })
+
+const isEnd = ref(false) //是否已经到底
+//滚动触底
+async function onScrolltolower() {
+  //获取当前选项
+  const currSubType = subTypes.value[activeIndex.value]
+  if (currSubType.goodsItems.page < currSubType.goodsItems.pages) {
+    const page = ++currSubType.goodsItems.page
+    const resp = await getHotRecommendAPI(currUrlMap!.url, {
+      subType: currSubType.id,
+      page: page,
+      pageSize: currSubType.goodsItems.pageSize,
+    })
+    const newSubType = resp.result.subTypes[activeIndex.value]
+    currSubType.goodsItems.items.push(...newSubType.goodsItems.items) //追加数据
+  } else {
+    isEnd.value = true
+  }
+}
 </script>
 
 <template>
@@ -51,8 +70,8 @@ onLoad(() => {
         class="text"
         :class="{ active: index === activeIndex }"
         @tap="activeIndex = index"
-        >{{ item.title }}</text
-      >
+        >{{ item.title }}
+      </text>
     </view>
     <!-- 推荐列表 -->
     <scroll-view
@@ -61,6 +80,7 @@ onLoad(() => {
       v-show="index === activeIndex"
       scroll-y
       class="scroll-view"
+      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
         <navigator
@@ -78,7 +98,7 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ isEnd ? '没有更多了' : '加载中...' }}</view>
     </scroll-view>
   </view>
 </template>
