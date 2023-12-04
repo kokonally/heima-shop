@@ -1,11 +1,11 @@
 <script setup lang="ts">
 //获取轮播图数据
 import { getHomeBanner } from '@/services/home'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { getCategoryTopAPI } from '@/services/category'
-import type { CategoryTopItem } from '@/types/category'
+import type { CategoryChildItem, CategoryTopItem } from '@/types/category'
 const bannerList = ref<BannerItem[]>([])
 async function getBannerData() {
   const resp = await getHomeBanner(2)
@@ -23,6 +23,11 @@ async function getCategoryTopAPIData() {
   const resp = await getCategoryTopAPI()
   categoryList.value = resp.result
 }
+
+//二级分类
+const childrenList = computed<CategoryChildItem[]>(
+  () => categoryList.value[activeIndex.value]?.children || [],
+)
 </script>
 
 <template>
@@ -52,27 +57,24 @@ async function getCategoryTopAPIData() {
         <!-- 焦点图 -->
         <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
-        <view class="panel" v-for="item in 3" :key="item">
+        <view class="panel" v-for="item in childrenList" :key="item.id">
           <view class="title">
-            <text class="name">宠物用品</text>
+            <text class="name">{{ item.name }}</text>
             <navigator class="more" hover-class="none">全部</navigator>
           </view>
           <view class="section">
             <navigator
-              v-for="goods in 4"
-              :key="goods"
+              v-for="goods in item.goods"
+              :key="goods.id"
               class="goods"
               hover-class="none"
-              :url="`/pages/goods/goods?id=`"
+              :url="`/pages/goods/goods?id=${goods.id}`"
             >
-              <image
-                class="image"
-                src="https://yanxuan-item.nosdn.127.net/674ec7a88de58a026304983dd049ea69.jpg"
-              ></image>
-              <view class="name ellipsis">木天蓼逗猫棍</view>
+              <image class="image" :src="goods.picture"></image>
+              <view class="name ellipsis">{{ goods.name }}</view>
               <view class="price">
                 <text class="symbol">¥</text>
-                <text class="number">16.00</text>
+                <text class="number">{{ goods.price }}</text>
               </view>
             </navigator>
           </view>
