@@ -11,6 +11,7 @@ const pros = defineProps<{
 }>()
 
 const goods = ref<GoodsResult>()
+
 async function getGoodsByIdData() {
   const resp = await getGoodsByIdAPI(pros.id)
   goods.value = resp.result
@@ -34,6 +35,13 @@ function onTapImage(url: string) {
     urls: goods.value!.mainPictures,
   })
 }
+
+const popup = ref<{
+  open: (
+    type?: 'top' | 'center' | 'bottom' | 'left' | 'right' | 'message' | 'dialog' | 'share',
+  ) => void
+  close: () => void
+}>()
 </script>
 
 <template>
@@ -74,7 +82,7 @@ function onTapImage(url: string) {
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址</text>
         </view>
-        <view class="item arrow">
+        <view @tap="popup?.open()" class="item arrow">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮</text>
         </view>
@@ -149,6 +157,13 @@ function onTapImage(url: string) {
       <view class="buynow"> 立即购买</view>
     </view>
   </view>
+
+  <!--弹出层-->
+  <uni-popup background-color="#fff" ref="popup" type="bottom">
+    <view>内容1</view>
+    <view>内容2</view>
+    <button @tap="popup?.close()">关闭</button>
+  </uni-popup>
 </template>
 
 <style lang="scss">
