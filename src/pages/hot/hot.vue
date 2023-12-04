@@ -23,7 +23,7 @@ uni.setNavigationBarTitle({
 })
 
 const bannerPicture = ref<string>('') //封面图
-const subTypes = ref<SubTypeItem[]>([]) //推荐选项
+const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([]) //推荐选项
 //获取热门推荐
 async function getHotRecommendData() {
   const resp = await getHotRecommendAPI(currUrlMap!.url)
@@ -36,7 +36,6 @@ onLoad(() => {
   getHotRecommendData()
 })
 
-const isEnd = ref(false) //是否已经到底
 //滚动触底
 async function onScrolltolower() {
   //获取当前选项
@@ -51,7 +50,7 @@ async function onScrolltolower() {
     const newSubType = resp.result.subTypes[activeIndex.value]
     currSubType.goodsItems.items.push(...newSubType.goodsItems.items) //追加数据
   } else {
-    isEnd.value = true
+    currSubType.finish = true
   }
 }
 </script>
@@ -98,7 +97,7 @@ async function onScrolltolower() {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">{{ isEnd ? '没有更多了' : '加载中...' }}</view>
+      <view class="loading-text">{{ item.finish ? '没有更多了' : '加载中...' }}</view>
     </scroll-view>
   </view>
 </template>
