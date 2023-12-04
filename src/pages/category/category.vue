@@ -6,15 +6,17 @@ import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { getCategoryTopAPI } from '@/services/category'
 import type { CategoryChildItem, CategoryTopItem } from '@/types/category'
+import PageSkeleton from '@/pages/category/components/PageSkeleton.vue'
 const bannerList = ref<BannerItem[]>([])
 async function getBannerData() {
   const resp = await getHomeBanner(2)
   bannerList.value = resp.result
 }
 
-onLoad(() => {
-  getBannerData()
-  getCategoryTopAPIData()
+const finish = ref(false)
+onLoad(async () => {
+  await Promise.all([getBannerData(), getCategoryTopAPIData()])
+  finish.value = true
 })
 
 const categoryList = ref<CategoryTopItem[]>([])
@@ -31,7 +33,8 @@ const childrenList = computed<CategoryChildItem[]>(
 </script>
 
 <template>
-  <view class="viewport">
+  <PageSkeleton v-if="!finish" />
+  <view v-else class="viewport">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
