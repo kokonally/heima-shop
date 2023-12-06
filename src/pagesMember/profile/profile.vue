@@ -63,6 +63,9 @@ async function onSubmit() {
     nickname,
     gender,
     birthday,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
   })
 
   //更新store
@@ -86,6 +89,14 @@ function onGenderChange(event: UniHelper.RadioGroupOnChangeEvent) {
 //修改生日时触发
 function onBirthdayChange(event: UniHelper.DatePickerOnChangeEvent) {
   profile.value.birthday = event.detail.value
+}
+
+let fullLocationCode: [string, string, string] = ['', '', ''] //地区代码
+
+//修改城市
+function onFullLocationChange(event: UniHelper.RegionPickerOnChangeEvent) {
+  profile.value.fullLocation = event.detail.value.join(' ')
+  fullLocationCode = event.detail.code!
 }
 </script>
 
@@ -144,7 +155,12 @@ function onBirthdayChange(event: UniHelper.DatePickerOnChangeEvent) {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            @change="onFullLocationChange"
+            class="picker"
+            mode="region"
+            :value="profile?.fullLocation?.split(' ')"
+          >
             <view v-if="profile?.fullLocation">{{ profile?.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
