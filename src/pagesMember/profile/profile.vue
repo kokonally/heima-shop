@@ -4,9 +4,11 @@ import { getMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/memebr/member'
+
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
 const profile = ref<ProfileDetail>({} as ProfileDetail)
+
 //获取个人信息
 async function getMemberProfileData() {
   const resp = await getMemberProfileAPI()
@@ -16,6 +18,38 @@ async function getMemberProfileData() {
 onLoad(() => {
   getMemberProfileData()
 })
+
+//修改头像
+function onAvatarChange() {
+  uni.chooseMedia({
+    count: 1,
+    mediaType: ['image'],
+    success: (resp) => {
+      //本地路径
+      const { tempFilePath } = resp.tempFiles[0]
+      //文件上传
+      uni.uploadFile({
+        url: '/member/profile/avatar',
+        name: 'file',
+        filePath: tempFilePath,
+        success: (resp) => {
+          if (resp.statusCode === 200) {
+            profile.value!.avatar = JSON.parse(resp.data).result.avatar
+            uni.showToast({
+              icon: 'success',
+              title: '头像修改成功',
+            })
+          } else {
+            uni.showToast({
+              icon: 'error',
+              title: '头像修改失败',
+            })
+          }
+        },
+      })
+    },
+  })
+}
 </script>
 
 <template>
@@ -27,7 +61,7 @@ onLoad(() => {
     </view>
     <!-- 头像 -->
     <view class="avatar">
-      <view class="avatar-content">
+      <view @tap="onAvatarChange" class="avatar-content">
         <image class="image" :src="profile.avatar" mode="aspectFill" />
         <text class="text">点击修改头像</text>
       </view>
@@ -201,6 +235,7 @@ page {
     .picker {
       flex: 1;
     }
+
     .placeholder {
       color: #808080;
     }
