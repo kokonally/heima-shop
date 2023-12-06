@@ -4,6 +4,10 @@
 //获取code登录凭证
 import { onLoad } from '@dcloudio/uni-app'
 import { postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
+import { useMemberStore } from '@/stores'
+import WebSocket_2 from 'vite'
+import Data = WebSocket_2.Data
+import type { LoginResult } from '@/types/memebr/login'
 let codeWxMin = ''
 onLoad(async () => {
   const resp = await wx.login()
@@ -22,10 +26,28 @@ async function onGetPhoneNumber(ev: UniHelper.ButtonOnGetphonenumber) {
   console.log(resp)
 }
 
+async function loginSuccess(resp: Data<LoginResult>) {
+  //保存会员信息
+  const memberStore = useMemberStore()
+  memberStore.setProfile(resp.result)
+  //成功提示
+  await uni.showToast({
+    icon: 'success',
+    title: '登录成功',
+  })
+
+  setTimeout(() => {
+    //页面跳转
+    uni.switchTab({
+      url: '/pages/my/my',
+    })
+  }, 500)
+}
+
 //模拟手机号码登录
 async function onGetPhoneNumberSimple() {
   const resp = await postLoginWxMinSimpleAPI('13620301505')
-  console.log(resp)
+  await loginSuccess(resp)
 }
 </script>
 
