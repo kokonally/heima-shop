@@ -9,7 +9,7 @@ import type { PageParams } from '@/types/global'
 const guessList = ref<GuessItem[]>([])
 const pageParam: PageParams = {
   page: 1,
-  size: 10,
+  pageSize: 10,
 }
 const finish = ref<boolean>(false)
 const getHomeGoodsGuessLikeData = async () => {
@@ -19,8 +19,8 @@ const getHomeGoodsGuessLikeData = async () => {
   const resp = await getHomeGoodsGuessLike(pageParam)
   guessList.value.push(...resp.result.items)
   //分页条件
-  if (pageParam.page < resp.result.pages) {
-    pageParam.page++
+  if (pageParam.page! < resp.result.pages) {
+    pageParam.page!++
   } else {
     finish.value = true
   }
@@ -58,7 +58,7 @@ defineExpose({
       class="guess-item"
       v-for="item in guessList"
       :key="item.id"
-      :url="`/pages/goods/goods?id=4007498`"
+      :url="`/pages/goods/goods?id=${item.id}`"
     >
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }}</view>
