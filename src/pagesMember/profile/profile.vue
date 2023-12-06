@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 获取屏幕边界到安全区域距离
-import { getMemberProfileAPI } from '@/services/profile'
+import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/memebr/member'
@@ -48,6 +48,18 @@ function onAvatarChange() {
         },
       })
     },
+  })
+}
+
+//点击保存，提交表单
+async function onSubmit() {
+  const resp = await putMemberProfileAPI({
+    nickname: profile.value?.nickname,
+  })
+
+  uni.showToast({
+    icon: 'success',
+    title: '保存成功',
   })
 }
 </script>
@@ -117,7 +129,7 @@ function onAvatarChange() {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button class="form-button" @tap="onSubmit">保 存</button>
     </view>
   </view>
 </template>
