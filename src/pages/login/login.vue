@@ -1,12 +1,8 @@
-// src/pages/login/login.vue
-
 <script setup lang="ts">
 //获取code登录凭证
 import { onLoad } from '@dcloudio/uni-app'
 import { postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
 import { useMemberStore } from '@/stores'
-import WebSocket_2 from 'vite'
-import Data = WebSocket_2.Data
 import type { LoginResult } from '@/types/memebr/login'
 let codeWxMin = ''
 onLoad(async () => {
@@ -26,10 +22,10 @@ async function onGetPhoneNumber(ev: UniHelper.ButtonOnGetphonenumber) {
   console.log(resp)
 }
 
-async function loginSuccess(resp: Data<LoginResult>) {
+async function loginSuccess(loginResult: LoginResult) {
   //保存会员信息
   const memberStore = useMemberStore()
-  memberStore.setProfile(resp.result)
+  memberStore.setProfile(loginResult)
   //成功提示
   await uni.showToast({
     icon: 'success',
@@ -47,7 +43,7 @@ async function loginSuccess(resp: Data<LoginResult>) {
 //模拟手机号码登录
 async function onGetPhoneNumberSimple() {
   const resp = await postLoginWxMinSimpleAPI('13620301505')
-  await loginSuccess(resp)
+  await loginSuccess(resp.result)
 }
 </script>
 
