@@ -49,7 +49,7 @@ const refresherStatus = ref<boolean>(false)
 async function onRefresherrefresh() {
   refresherStatus.value = true //开启下拉动画
   await Promise.all([getHomeBannerData(), getgetHomeCategoryMutliData(), getHomeHotMutliData()])
-  guessRef.value.reFlash()
+  guessRef.value?.reFlash()
   //刷新成功
   uni.showToast({
     icon: 'none',
