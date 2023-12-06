@@ -16,7 +16,7 @@ export function getMemberProfileAPI() {
  * @param data 请求参数
  */
 export function putMemberProfileAPI(data: ProfileParams) {
-  return http({
+  return http<ProfileDetail>({
     method: 'PUT',
     url: '/member/profile',
     data,

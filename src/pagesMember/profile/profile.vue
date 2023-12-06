@@ -4,6 +4,7 @@ import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/memebr/member'
+import { useMemberStore } from '@/stores'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -18,6 +19,8 @@ async function getMemberProfileData() {
 onLoad(() => {
   getMemberProfileData()
 })
+
+const memberStore = useMemberStore()
 
 //修改头像
 function onAvatarChange() {
@@ -34,7 +37,9 @@ function onAvatarChange() {
         filePath: tempFilePath,
         success: (resp) => {
           if (resp.statusCode === 200) {
-            profile.value!.avatar = JSON.parse(resp.data).result.avatar
+            const avatar = JSON.parse(resp.data).result.avatar
+            profile.value!.avatar = avatar
+            memberStore.profile!.avatar = avatar
             uni.showToast({
               icon: 'success',
               title: '头像修改成功',
@@ -57,10 +62,17 @@ async function onSubmit() {
     nickname: profile.value?.nickname,
   })
 
+  //更新store
+  memberStore.profile!.nickname = resp.result?.nickname
+
   uni.showToast({
     icon: 'success',
     title: '保存成功',
   })
+
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 500)
 }
 </script>
 
