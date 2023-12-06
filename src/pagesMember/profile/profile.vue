@@ -3,7 +3,7 @@
 import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import type { ProfileDetail } from '@/types/memebr/member'
+import type { Gender, ProfileDetail } from '@/types/memebr/member'
 import { useMemberStore } from '@/stores'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -58,8 +58,11 @@ function onAvatarChange() {
 
 //点击保存，提交表单
 async function onSubmit() {
+  const { nickname, gender, birthday } = profile.value
   const resp = await putMemberProfileAPI({
-    nickname: profile.value?.nickname,
+    nickname,
+    gender,
+    birthday,
   })
 
   //更新store
@@ -73,6 +76,16 @@ async function onSubmit() {
   setTimeout(() => {
     uni.navigateBack()
   }, 500)
+}
+
+//修改性别
+function onGenderChange(event: UniHelper.RadioGroupOnChangeEvent) {
+  profile.value.gender = event.detail.value as Gender
+}
+
+//修改生日时触发
+function onBirthdayChange(event: UniHelper.DatePickerOnChangeEvent) {
+  profile.value.birthday = event.detail.value
 }
 </script>
 
@@ -104,7 +117,7 @@ async function onSubmit() {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
               男
@@ -118,6 +131,7 @@ async function onSubmit() {
         <view class="form-item">
           <text class="label">生日</text>
           <picker
+            @change="onBirthdayChange"
             class="picker"
             mode="date"
             start="1900-01-01"
