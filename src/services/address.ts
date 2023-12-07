@@ -1,5 +1,5 @@
 import { http } from '@/utils/http'
-import type { AddressParams } from '@/types/address'
+import type { AddressItem, AddressParams } from '@/types/address'
 
 /**
  * 新增收货地址
@@ -10,5 +10,15 @@ export function postMemberAddressAPI(data: AddressParams) {
     method: 'POST',
     url: '/member/address',
     data,
+  })
+}
+
+/**
+ * 获取收货地址
+ */
+export function getMemberAddressAPI() {
+  return http<AddressItem[]>({
+    method: 'GET',
+    url: '/member/address',
   })
 }
