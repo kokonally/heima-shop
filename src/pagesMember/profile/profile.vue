@@ -58,7 +58,7 @@ function onAvatarChange() {
 
 //点击保存，提交表单
 async function onSubmit() {
-  const { nickname, gender, birthday } = profile.value
+  const { nickname, gender, birthday, profession } = profile.value
   const resp = await putMemberProfileAPI({
     nickname,
     gender,
@@ -66,6 +66,7 @@ async function onSubmit() {
     provinceCode: fullLocationCode[0],
     cityCode: fullLocationCode[1],
     countyCode: fullLocationCode[2],
+    profession,
   })
 
   //更新store
