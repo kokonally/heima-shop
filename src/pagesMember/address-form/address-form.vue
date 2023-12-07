@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { postMemberAddressAPI } from '@/services/address'
+import { getMemberAddressByIdAPI, postMemberAddressAPI } from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 表单数据
 const form = ref({
@@ -15,7 +16,7 @@ const form = ref({
 })
 
 const pros = defineProps<{
-  id?: number
+  id?: string
 }>()
 //动态设置标题
 uni.setNavigationBarTitle(pros.id ? { title: '修改地址' } : { title: '新建地址' })
@@ -45,6 +46,18 @@ function onRegionChange(event: UniHelper.RegionPickerOnChangeEvent) {
 function onSwitch(event: UniHelper.SwitchOnChangeEvent) {
   form.value.isDefault = event.detail.value ? 1 : 0
 }
+
+async function getMemberAddressById(id: string) {
+  const resp = await getMemberAddressByIdAPI(id)
+  Object.assign(form.value, resp.result)
+}
+
+onLoad(() => {
+  if (pros.id) {
+    //有id，编辑地址
+    getMemberAddressById(pros.id)
+  }
+})
 </script>
 
 <template>

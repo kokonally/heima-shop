@@ -22,3 +22,11 @@ export function getMemberAddressAPI() {
     url: '/member/address',
   })
 }
+
+//根据id查询地址详情
+export function getMemberAddressByIdAPI(id: string) {
+  return http<AddressItem>({
+    method: 'GET',
+    url: `/member/address/${id}`,
+  })
+}
