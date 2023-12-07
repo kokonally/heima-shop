@@ -30,3 +30,16 @@ export function getMemberAddressByIdAPI(id: string) {
     url: `/member/address/${id}`,
   })
 }
+
+/**
+ * 修改收货地址
+ * @param id 地址id
+ * @param data 地址信息
+ */
+export function putMemberAddressByIdAPI(id: string, data: AddressParams) {
+  return http({
+    method: 'PUT',
+    url: `/member/address/${id}`,
+    data,
+  })
+}
