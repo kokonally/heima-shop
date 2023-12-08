@@ -6,6 +6,7 @@ import { ref } from 'vue'
 import type { GoodsResult } from '@/types/goods'
 import AddressPanel from '@/pages/goods/components/AddressPanel.vue'
 import ServicePanel from '@/pages/goods/components/ServicePanel.vue'
+import type { SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const pros = defineProps<{
@@ -17,6 +18,29 @@ const goods = ref<GoodsResult>()
 async function getGoodsByIdData() {
   const resp = await getGoodsByIdAPI(pros.id)
   goods.value = resp.result
+  //处理sku
+  localdata.value = {
+    _id: resp.result.id,
+    name: resp.result.name,
+    goods_thumb: resp.result.mainPictures[0],
+    spec_list: resp.result.specs.map((v) => {
+      return {
+        name: v.name,
+        list: v.values,
+      }
+    }),
+    sku_list: resp.result.skus.map((v) => {
+      return {
+        _id: v.id,
+        goods_id: resp.result.id,
+        goods_name: resp.result.name,
+        image: v.picture,
+        price: v.price * 100,
+        stock: v.inventory,
+        sku_name_arr: v.specs.map((vv) => vv.valueName),
+      }
+    }),
+  }
 }
 
 onLoad(() => {
@@ -25,7 +49,7 @@ onLoad(() => {
 
 const current = ref(0)
 
-function onChange(event: UniHelper.SwiperOnChange) {
+function onChange(event: UniHelper.SwiperOnChangeEvent) {
   current.value = event.detail!.current
 }
 
@@ -52,9 +76,33 @@ const openPopup = (name: typeof popupName.value) => {
   popupName.value = name
   popup.value?.open()
 }
+
+//是否显示sku组件
+const isShowSku = ref(false)
+const localdata = ref({} as SkuPopupLocaldata)
+
+enum SkuMode {
+  Both = 1,
+  Cart = 2,
+  Buy = 3,
+}
+
+function changeSku(mode: SkuMode) {
+  isShowSku.value = true
+  skuMode.value = mode
+}
+
+const skuMode = ref<SkuMode>(SkuMode.Both)
 </script>
 
 <template>
+  <vk-data-goods-sku-popup
+    v-model="isShowSku"
+    :localdata="localdata"
+    :mode="skuMode"
+    add-cart-background-color="#FFA868"
+    buy-now-background-color="#27ba9b"
+  />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
@@ -86,7 +134,7 @@ const openPopup = (name: typeof popupName.value) => {
       <view class="action">
         <view class="item arrow">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格</text>
+          <text class="text ellipsis" @tap="changeSku(SkuMode.Both)"> 请选择商品规格</text>
         </view>
         <view @tap="openPopup('address')" class="item arrow">
           <text class="label">送至</text>
@@ -163,8 +211,8 @@ const openPopup = (name: typeof popupName.value) => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车</view>
-      <view class="buynow"> 立即购买</view>
+      <view class="addcart" @tap="changeSku(SkuMode.Cart)"> 加入购物车</view>
+      <view class="buynow" @tap="changeSku(SkuMode.Buy)"> 立即购买</view>
     </view>
   </view>
 
