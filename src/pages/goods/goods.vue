@@ -7,9 +7,11 @@ import type { GoodsResult } from '@/types/goods'
 import AddressPanel from '@/pages/goods/components/AddressPanel.vue'
 import ServicePanel from '@/pages/goods/components/ServicePanel.vue'
 import type {
+  SkuPopupEvent,
   SkuPopupInstance,
   SkuPopupLocaldata,
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import { postMemberCartAPI } from '@/services/cart'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const pros = defineProps<{
@@ -101,6 +103,15 @@ const skuRef = ref<SkuPopupInstance>()
 const select = computed(() => {
   return skuRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
 })
+
+async function onAddCart(ev: SkuPopupEvent) {
+  await postMemberCartAPI({ skuId: ev._id, count: ev.buy_num })
+  uni.showToast({
+    icon: 'success',
+    title: '添加成功',
+  })
+  isShowSku.value = false
+}
 </script>
 
 <template>
@@ -116,6 +127,7 @@ const select = computed(() => {
       borderColor: '#27ba9b',
       backgroundColor: '#e9f8f5',
     }"
+    @add-cart="onAddCart"
   />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
