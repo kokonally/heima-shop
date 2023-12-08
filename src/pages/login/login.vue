@@ -11,7 +11,7 @@ onLoad(async () => {
 })
 
 //获取用户手机号码（企业才能使用）
-async function onGetPhoneNumber(ev: UniHelper.ButtonOnGetphonenumber) {
+async function onGetPhoneNumber(ev: UniHelper.ButtonOnGetphonenumberEvent) {
   const encryptedData = ev.detail!.encryptedData!
   const iv = ev.detail!.iv!
   const resp = await postLoginWxMinAPI({
@@ -34,9 +34,10 @@ async function loginSuccess(loginResult: LoginResult) {
 
   setTimeout(() => {
     //页面跳转
-    uni.switchTab({
+    /*uni.switchTab({
       url: '/pages/my/my',
-    })
+    })*/
+    uni.navigateBack()
   }, 500)
 }
 
