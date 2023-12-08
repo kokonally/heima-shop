@@ -34,3 +34,16 @@ export function deleteMemberCartAPI(data: { ids: string[] }) {
     data,
   })
 }
+
+/**
+ * 根据skuId修改购物车
+ * @param skuId
+ * @param data
+ */
+export function putMemberCartBySkuId(skuId: string, data: { selected?: boolean; count?: number }) {
+  http({
+    method: 'PUT',
+    url: `/member/cart/${skuId}`,
+    data,
+  })
+}
