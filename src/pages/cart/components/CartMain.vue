@@ -11,6 +11,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import type { CartItem } from '@/types/cart'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box.vue'
+import type { XtxGuessInstance } from '@/types/component'
 
 const memberStore = useMemberStore()
 
@@ -91,10 +92,17 @@ function gotoPayment() {
     })
   }
 }
+
+const guessRef = ref<XtxGuessInstance>()
+//滚动到底部时触发
+function onScrolltolower() {
+  //加载猜你喜欢
+  guessRef.value?.getMore()
+}
 </script>
 
 <template>
-  <scroll-view scroll-y class="scroll-view">
+  <scroll-view scroll-y class="scroll-view" @scrolltolower="onScrolltolower">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
