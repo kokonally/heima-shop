@@ -99,6 +99,8 @@ function onScrolltolower() {
   //加载猜你喜欢
   guessRef.value?.getMore()
 }
+
+const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
 <template>
@@ -168,7 +170,7 @@ function onScrolltolower() {
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <view class="toolbar" :class='{ paddingBottom: safeAreaInsets!.bottom + "px"}'>
         <text class="all" :class="{ checked: allSelected }" @tap="onChangeSelectedAll">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCartListMoney }}</text>
@@ -412,6 +414,7 @@ function onScrolltolower() {
 
   height: 100rpx;
   padding: 0 20rpx;
+  padding-bottom: 20rpx;
   display: flex;
   align-items: center;
   border-top: 1rpx solid #ededed;
