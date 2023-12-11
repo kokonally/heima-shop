@@ -81,7 +81,7 @@ async function onOrderSubmit() {
   })
 
   //关闭当前页面，跳转到订单详细页面
-  uni.navigateTo({
+  uni.redirectTo({
     url: `/pagesOrder/detail/detail?id=${resp.result.id}`,
   })
 }
