@@ -1,5 +1,5 @@
 import { http } from '@/utils/http'
-import type { OrderPreResult } from '@/types/order'
+import type { OrderCreateParams, OrderCreateResult, OrderPreResult } from '@/types/order'
 
 /**
  * 获取订单预支付信息
@@ -22,6 +22,18 @@ export function getMemberOrderPreNowAPI(data: {
   return http<OrderPreResult>({
     method: 'GET',
     url: '/member/order/pre/now',
+    data,
+  })
+}
+
+/**
+ * 提交订单
+ * @param data
+ */
+export function postMemberOrderAPI(data: OrderCreateParams) {
+  return http<OrderCreateResult>({
+    method: 'POST',
+    url: '/member/order',
     data,
   })
 }
