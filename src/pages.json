@@ -55,14 +55,13 @@
       "style": {
         "navigationBarTitleText": "商品详情"
       }
-    }
-    ,
+    },
     {
-  "path": "pages/cart/cart2",
-  "style": {
-    "navigationBarTitleText": "购物车"
-  }
-}
+      "path": "pages/cart/cart2",
+      "style": {
+        "navigationBarTitleText": "购物车"
+      }
+    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
@@ -137,6 +136,17 @@
           }
         }
       ]
+    },
+    {
+      "root": "pagesOrder",
+      "pages": [
+        {
+          "path": "create/create",
+          "style": {
+            "navigationBarTitleText": "填写订单"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
@@ -144,6 +154,12 @@
       "network": "all",
       "packages": [
         "pagesMember"
+      ]
+    },
+    "pages/cart/cart": {
+      "network": "all",
+      "packages": [
+        "pagesOrder"
       ]
     }
   }

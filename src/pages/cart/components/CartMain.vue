@@ -91,6 +91,11 @@ function gotoPayment() {
       title: '请选择商品',
     })
   }
+
+  //跳转到结算页
+  uni.navigateTo({
+    url: '/pagesOrder/create/create',
+  })
 }
 
 const guessRef = ref<XtxGuessInstance>()
@@ -170,7 +175,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar" :class='{ paddingBottom: safeAreaInsets!.bottom + "px"}'>
+      <view class="toolbar" :class="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
         <text class="all" :class="{ checked: allSelected }" @tap="onChangeSelectedAll">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCartListMoney }}</text>
