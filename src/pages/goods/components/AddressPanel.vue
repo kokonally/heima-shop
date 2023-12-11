@@ -1,5 +1,18 @@
 <script setup lang="ts">
+import type { AddressItem } from '@/types/address'
+import { useAddressStore } from '@/stores/modules/address'
+
 const emit = defineEmits(['close'])
+defineProps<{
+  list: AddressItem[]
+}>()
+const addressStore = useAddressStore()
+
+//选择地址
+function onSelectAddress(item: AddressItem) {
+  addressStore.changeSelectedAddress(item)
+  emit('close')
+}
 </script>
 
 <template>
@@ -10,24 +23,23 @@ const emit = defineEmits(['close'])
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
+      <view class="item" v-for="item in list" :key="item.id" @tap="onSelectAddress(item)">
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.address }}</view>
+        <text
+          class="icon icon-checked"
+          v-if="
+            item.id === addressStore.selectedAddress?.id ||
+            (!addressStore.selectedAddress && item.isDefault)
+          "
+        ></text>
+        <text class="icon icon-ring" v-else></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
+      <navigator url="/pagesMember/address-form/address-form" class="button primary">
+        新建地址
+      </navigator>
       <view v-if="false" class="button primary">确定</view>
     </view>
   </view>

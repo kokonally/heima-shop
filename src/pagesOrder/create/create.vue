@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { getMemberOrderPreAPI } from '@/services/order'
+import { getMemberOrderPreAPI, getMemberOrderPreNowAPI } from '@/services/order'
 import { onLoad } from '@dcloudio/uni-app'
 import type { OrderPreResult } from '@/types/order'
 import type { AddressItem } from '@/types/address'
@@ -26,11 +26,29 @@ const onChangeDelivery: UniHelper.SelectorPickerOnChange = (ev) => {
 }
 
 const orderPre = ref<OrderPreResult>()
+
 //获取订单信息
 async function getMemberOrderPreData() {
-  const resp = await getMemberOrderPreAPI()
+  let resp
+  if (pros.skuId && pros.count) {
+    //立即购买
+    resp = await getMemberOrderPreNowAPI({
+      skuId: pros.skuId,
+      count: pros.count,
+      addressId: pros.addressId,
+    })
+  } else {
+    resp = await getMemberOrderPreAPI()
+  }
+
   orderPre.value = resp.result
 }
+
+const pros = defineProps<{
+  skuId?: string
+  count?: number
+  addressId?: string
+}>()
 
 onLoad(() => {
   getMemberOrderPreData()
@@ -55,8 +73,8 @@ const selectAddress = computed<AddressItem>(() => {
       hover-class="none"
       url="/pagesMember/address/address?from=order"
     >
-      <view class="user"> {{ selectAddress.receiver }} {{ selectAddress.contact }} </view>
-      <view class="address"> {{ selectAddress.fullLocation }} {{ selectAddress.address }} </view>
+      <view class="user"> {{ selectAddress.receiver }} {{ selectAddress.contact }}</view>
+      <view class="address"> {{ selectAddress.fullLocation }} {{ selectAddress.address }}</view>
       <text class="icon icon-right"></text>
     </navigator>
     <navigator
@@ -65,7 +83,7 @@ const selectAddress = computed<AddressItem>(() => {
       hover-class="none"
       url="/pagesMember/address/address?from=order"
     >
-      <view class="address"> 请选择收货地址 </view>
+      <view class="address"> 请选择收货地址</view>
       <text class="icon icon-right"></text>
     </navigator>
 
@@ -80,7 +98,7 @@ const selectAddress = computed<AddressItem>(() => {
       >
         <image class="picture" :src="item.picture" />
         <view class="meta">
-          <view class="name ellipsis"> {{ item.name }} </view>
+          <view class="name ellipsis"> {{ item.name }}</view>
           <view class="attrs">{{ item.attrsText }}</view>
           <view class="prices">
             <view class="pay-price symbol">{{ item.payPrice }}</view>
@@ -113,11 +131,11 @@ const selectAddress = computed<AddressItem>(() => {
     <!-- 支付金额 -->
     <view class="settlement">
       <view class="item">
-        <text class="text">商品总价: </text>
+        <text class="text">商品总价:</text>
         <text class="number symbol">{{ orderPre?.summary.totalPrice.toFixed(2) }}</text>
       </view>
       <view class="item">
-        <text class="text">运费: </text>
+        <text class="text">运费:</text>
         <text class="number symbol">{{ orderPre?.summary.postFee.toFixed(2) }}</text>
       </view>
     </view>
@@ -128,7 +146,7 @@ const selectAddress = computed<AddressItem>(() => {
     <view class="total-pay symbol">
       <text class="number">{{ orderPre?.summary.totalPayPrice.toFixed(2) }}</text>
     </view>
-    <view class="button" :class="{ disabled: true }"> 提交订单 </view>
+    <view class="button" :class="{ disabled: true }"> 提交订单</view>
   </view>
 </template>
 

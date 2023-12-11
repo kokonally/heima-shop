@@ -6,7 +6,22 @@ import type { OrderPreResult } from '@/types/order'
  */
 export function getMemberOrderPreAPI() {
   return http<OrderPreResult>({
+    method: 'GET',
     url: '/member/order/pre',
-    method: 'get',
+  })
+}
+
+/**
+ * 立即购买
+ */
+export function getMemberOrderPreNowAPI(data: {
+  skuId: string
+  count: number
+  addressId?: string
+}) {
+  return http<OrderPreResult>({
+    method: 'GET',
+    url: '/member/order/pre/now',
+    data,
   })
 }
